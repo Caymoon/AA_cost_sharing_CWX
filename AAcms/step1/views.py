@@ -24,7 +24,8 @@ class CreateForm(forms.Form):
     actname = forms.CharField(label='actname',max_length=15)
     actdate = forms.DateField(label='actdate')
     location= forms.CharField(label='location',max_length=100)
-    before  = forms.BooleanField(label='before')
+    beforeChoices=((True,'Yes'),(False,'No'))
+    before  = forms.ChoiceField(choices=beforeChoices,label='before')
     budget  = forms.FloatField(label='budget')
     cost    = forms.FloatField(label='cost')
 
@@ -44,6 +45,9 @@ def regist(request):
     return render_to_response('regist.html',{'uf':uf})
     
 def login(request):
+    username = request.COOKIES.get('username','')
+    if username:
+        return HttpResponseRedirect('/online/userinfo/')
     if request.method =='POST':
         lf = LoginForm(request.POST)
         uf = UserForm(request.POST)
@@ -156,7 +160,7 @@ def actinfo(request,actid):
         alluser = User.objects.all()
         nu      = []
         for user in now[0].partner.all():
-            if user.id == u.id: partner[user.id]=user.username+" (Holder)"
+            if user.id == u.id: partner[user.id]=user.username+" (Owner)"
             else: partner[user.id]=user.username
         for user in alluser:
             if not user in now[0].partner.all():
@@ -164,12 +168,18 @@ def actinfo(request,actid):
         if request.method == 'POST':
            # return HttpResponse('Create Action success.')
             for key,value in request.POST.items():
+                if key == 'yes':
+                    now[0].able = False
+                    now[0].save()
+                    return HttpResponseRedirect('/online/actinfo/'+actid)
                 s = User.objects.get(id=key)
                 if s in nu : now[0].partner.add(s)
                 else:        now[0].partner.remove(s)
             now[0].save()
             return HttpResponseRedirect('/online/actinfo/'+actid)
-        return render_to_response('actinfo.html',{'actname':actname,'actdate':actdate,'able':able,'partner':partner,'u':u,'username':username,'nu':nu,'owner':owner})
+        nd=budget-recive
+        pnd=nd/len(partner)
+        return render_to_response('actinfo.html',{'pnd':pnd,'actname':actname,'actdate':actdate,'able':able,'partner':partner,'u':u,'username':username,'nu':nu,'owner':owner,'budget':budget,'location':location,'recive':recive,'nd':nd})
     return HttpResponse('Wrong Action ID!')
     
         

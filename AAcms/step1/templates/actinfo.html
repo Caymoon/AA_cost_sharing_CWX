@@ -21,7 +21,8 @@
 			<body>
 			<h1>The infomation of action {{actname}} !</h1>
 			<br>
-			<h3>The action will be held on {{actdate}}</h3>
+			<h3>The action will be held on {{actdate}}. Located at {{location}}</h3>
+			<h3>The budget is ${{budget}}, you have recived ${{recive}}</h3>
 			<h3>
 				{% if able == True%}
 					The action is still running...
@@ -36,17 +37,22 @@
 			<tr>
 				<td>User ID</td>
 				<td>User name</td>
+				{% if able == True%}
 				{% if username == u.username%}
-					<button type="button" class="btn btn-primary btn" data-toggle="modal" data-target="#myModal">
-  								Add new User
-						</button>
+					<button type="button" class="btn btn-primary btn" data-toggle="modal" data-target="#myModal">Add new users</button>
+					<button type="button" class="btn btn-danger btn" data-toggle="modal" data-target="#myModal2">Gathering</button>
+
+
+
 					<td>Operation</td>
+				{% endif %}
 				{% endif %}
 			</tr>
 			{% for key,value in partner.items %}
 			<tr>
 			<td>{{key}}</td>
 			<td>{{value}}</td>
+			{% if able == True%}
 			{% if username == u.username %}
 			{% if key != owner %}
 			<td>
@@ -61,7 +67,7 @@
 				<button type="button" class="btn btn-link">Owner</button>
 			</td>
 			{% endif %}
-
+			{% endif %}
 			{% endif %}
 			</tr>
 			{% endfor %}
@@ -78,14 +84,15 @@
 							    <div class="modal-content">
 							      <div class="modal-header">
 							        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-							        <h4 class="modal-title">Modal title</h4>
+							        <h4 class="modal-title">Add new users</h4>
 							      </div>
 							      <div class="modal-body">
 							        <form method='post'>
+							        	Please select the user you want to add.</br>
 							        	{% for i in nu %}
 							        	  <div class="checkbox">
 										    <label>
-										      <input type="checkbox" name={{i.id}}> {{i.username}}
+										      <input type="checkbox" name={{i.id}}> {{i.nickname}} ({{i.username}})
 										    </label>
 										  </div>
 										 {% endfor %}
@@ -96,7 +103,31 @@
 							      </div>
 							      <div class="modal-footer">
 							        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-							        <button type="button" class="btn btn-primary">Save changes</button>
+							     
+							      </div>
+							    </div><!-- /.modal-content -->
+							  </div><!-- /.modal-dialog -->
+						</div><!-- /.modal -->
+
+						<div class="modal fade" id="myModal2">
+							  <div class="modal-dialog">
+							    <div class="modal-content">
+							      <div class="modal-header">
+							        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+							        <h4 class="modal-title">Gathering</h4>
+							      </div>
+							      <div class="modal-body">
+							        	${{nd}} needs to be gathered.</br>
+							        	Per person needs to pay ${{pnd}}</br>
+							        	Confirm to close the actiton?
+							      </div>
+							      <div class="modal-footer">
+							      	<form method='post'>
+							      		<button type="submit" class="btn btn-primary" name="yes">Yes</button>
+							      		<button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+							      	</form>
+							        
+							   
 							      </div>
 							    </div><!-- /.modal-content -->
 							  </div><!-- /.modal-dialog -->
