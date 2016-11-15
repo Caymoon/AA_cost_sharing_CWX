@@ -21,7 +21,7 @@ class Act(models.Model):
     before  = models.BooleanField()
     budget  = models.FloatField()
     cost    = models.FloatField()
-    recive  = models.FloatField(default=True)
+    recive  = models.FloatField(default=0.0)
     owner   = models.IntegerField()
     partner = models.ManyToManyField(User)
     able    = models.BooleanField(default=True)

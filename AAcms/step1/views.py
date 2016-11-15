@@ -22,7 +22,8 @@ class LoginForm(forms.Form):
 
 class CreateForm(forms.Form):
     actname = forms.CharField(label='actname',max_length=15)
-    actdate = forms.DateField(label='actdate')
+    #actdate = forms.DateField(label='actdate')
+    actdate = forms.DateField(label='Date(mm/dd/yy)')
     location= forms.CharField(label='location',max_length=100)
     beforeChoices=((True,'Yes'),(False,'No'))
     before  = forms.ChoiceField(choices=beforeChoices,label='before')
