@@ -21,9 +21,10 @@ class Act(models.Model):
     before  = models.BooleanField()
     budget  = models.FloatField()
     cost    = models.FloatField()
-    recive  = models.FloatField()
+    recive  = models.FloatField(default=True)
     owner   = models.IntegerField()
     partner = models.ManyToManyField(User)
+    able    = models.BooleanField(default=True)
     
     def __unicode__(self):
         return self.actname

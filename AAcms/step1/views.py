@@ -94,7 +94,7 @@ def createact(request):
             before  = cf.cleaned_data['before']
             budget  = cf.cleaned_data['budget']
             cost    = cf.cleaned_data['cost']
-            actnow=Act.objects.create(actname=actname,actdate=actdate,location=location,before=before,budget=budget,cost=cost,owner=nowID,recive=0)
+            actnow=Act.objects.create(actname=actname,actdate=actdate,location=location,before=before,budget=budget,cost=cost,owner=nowID)
             actnow.partner.add(nowuser)            
             return HttpResponse('Create Action success.')
     else:
@@ -104,18 +104,19 @@ def createact(request):
 def actinfo(request,actid):
     now = Act.objects.filter(id=actid)
     if len(now)!=0:
-        actname = now.actname
-        actdate = now.actdate
-        location= now.location
-        brefore = now.before
-        budget  = now.budget
-        cost    = now.cost
-        recive  = now.recive
-        owner   = now.owner
+        actname = now[0].actname
+        actdate = now[0].actdate
+        location= now[0].location
+        brefore = now[0].before
+        budget  = now[0].budget
+        cost    = now[0].cost
+        recive  = now[0].recive
+        owner   = now[0].owner
+        able    = now[0].able
         partner = {}
-        for user in now.partner.all():
+        for user in now[0].partner.all():
             partner[user.id]=user.username
-        return render_to_response('actinfo.html',{'actname':actname,'actdate':actdate,'partner':partner})
+        return render_to_response('actinfo.html',{'actname':actname,'actdate':actdate,'able':able,'partner':partner})
     return HttpResponse('Wrong Action ID!')
     
         
