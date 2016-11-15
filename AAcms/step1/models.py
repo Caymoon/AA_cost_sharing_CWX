@@ -23,7 +23,7 @@ class Act(models.Model):
     cost    = models.FloatField()
     recive  = models.FloatField()
     owner   = models.IntegerField()
-    partner = models.ForeignKey(User,related_name='ur')
+    partner = models.ManyToManyField(User)
     
     def __unicode__(self):
         return self.actname

@@ -25,4 +25,5 @@ urlpatterns = [
     url(r'^online/logout/$',views.logout,name='logout'),
     url(r'^online/userinfo/$',views.userinfo,name='userinfo'),
     url(r'^online/createact/$',views.createact,name='createact'),
+    url(r'^online/actinfo/(\d+)/$', views.actinfo, name='actinfo'),
 ]

@@ -18,6 +18,19 @@
 <td>{{value}}</td>
 </tr>
 {% endfor %}
+</table>
+<h4>You will attemp the following actions:</h4>
+<table>
+<tr>
+	<td>ActID</td><td>ActName</td>
+</tr>
+{% for key,value in acts.items %}
+<tr>
+<td>{{key}}</td>
+<td>{{value}}</td>
+<td><a href="http://127.0.0.1:8000/online/actinfo/{{key}}">Show more</a></td>
+</tr>
+{% endfor %}
 
 
 </table>

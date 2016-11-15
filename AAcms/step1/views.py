@@ -51,7 +51,7 @@ def login(request):
             password = lf.cleaned_data['password']
             user = User.objects.filter(username__exact = username,password__exact = password)
             if user:
-                response = HttpResponseRedirect('/online/index/')
+                response = HttpResponseRedirect('/online/userinfo/')
                 response.set_cookie('username',username,3600)
                 return response
             else:
@@ -64,7 +64,7 @@ def index(request):
     return render_to_response('index.html',{'username':username})
     
 def logout(request):
-    response = HttpResponse('logout')
+    response = HttpResponseRedirect('/online/login/')
     response.delete_cookie('username')
     return response
         
@@ -74,9 +74,12 @@ def userinfo(request):
     password = p.password
     nickname = p.nickname
     age      = p.age
-    sex      = p.sex    
+    sex      = p.sex
+    acts     = {}
+    for act in p.act_set.all():
+        acts[act.id] = act.actname
     ud={'username':username,'nickname':nickname,'password':password,'age':age,'sex':sex}
-    return render_to_response('userinfo.html',{'ud':ud})
+    return render_to_response('userinfo.html',{'ud':ud,'username':username,'acts':acts})
 
 def createact(request):
     username = request.COOKIES.get('username','')
@@ -91,11 +94,30 @@ def createact(request):
             before  = cf.cleaned_data['before']
             budget  = cf.cleaned_data['budget']
             cost    = cf.cleaned_data['cost']
-            Act.objects.create(actname=actname,actdate=actdate,location=location,before=before,budget=budget,cost=cost,owner=nowID,partner=nowuser,recive=0)
+            actnow=Act.objects.create(actname=actname,actdate=actdate,location=location,before=before,budget=budget,cost=cost,owner=nowID,recive=0)
+            actnow.partner.add(nowuser)            
             return HttpResponse('Create Action success.')
     else:
         cf = CreateForm()
     return render_to_response('createact.html',{'cf':cf})
+    
+def actinfo(request,actid):
+    now = Act.objects.filter(id=actid)
+    if len(now)!=0:
+        actname = now.actname
+        actdate = now.actdate
+        location= now.location
+        brefore = now.before
+        budget  = now.budget
+        cost    = now.cost
+        recive  = now.recive
+        owner   = now.owner
+        partner = {}
+        for user in now.partner.all():
+            partner[user.id]=user.username
+        return render_to_response('actinfo.html',{'actname':actname,'actdate':actdate,'partner':partner})
+    return HttpResponse('Wrong Action ID!')
+    
         
             
         
