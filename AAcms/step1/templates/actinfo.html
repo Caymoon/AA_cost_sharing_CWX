@@ -4,39 +4,101 @@
 {% load staticfiles %}
 <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
 <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap-theme.min.css' %}">
-<link rel="stylesheet" href="{% static 'bootstrap/css/mycss.css' %}"
+<link rel="stylesheet" href="{% static 'bootstrap/css/mycss.css' %}">
+<script src="{% static 'bootstrap/js/jquery.min.js' %}"></script>
+<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
 <!-- 引入boorstrap -->
 
-	
+
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title></title>
 </head>
 
-<body>
-<h1>The infomation of action {{actname}} !</h1>
-<br>
-<h3>The action will be held on {{actdate}}</h3>
-<h3>
-	{% if able == True%}
-		The action is running...
-	{%else%}
-		The action has already finished!
-	{%endif%}
-</h3>
+<div class="jumbotron">
+	<div class="container">
 
-<h4>These user will attend:</h4>
-<table>
-{% for key,value in partner.items %}
-<tr>
-<td>{{key}}</td>
-<td>{{value}}</td>
-</tr>
-{% endfor %}
+			<body>
+			<h1>The infomation of action {{actname}} !</h1>
+			<br>
+			<h3>The action will be held on {{actdate}}</h3>
+			<h3>
+				{% if able == True%}
+					The action is still running...
+				{%else%}
+					The action has already finished!
+				{%endif%}
+			</h3>
+			</br>
+			</br>
+			<h3>These user will attend:</h3>
+			<table class="table table-hover">
+			<tr>
+				<td>User ID</td>
+				<td>User name</td>
+				{% if username == u.username%}
+					<button type="button" class="btn btn-primary btn" data-toggle="modal" data-target="#myModal">
+  								Add new User
+						</button>
+					<td>Operation</td>
+				{% endif %}
+			</tr>
+			{% for key,value in partner.items %}
+			<tr>
+			<td>{{key}}</td>
+			<td>{{value}}</td>
+			{% if username == u.username %}
+			{% if key != owner %}
+			<td>
+				<form method="post">    
+    			<input type="submit" name={{key}} value="Delete" class="btn btn-link">
+				</form>
+			</td>
+			{% endif %}
+
+          {% if key == owner %}
+			<td>
+				<button type="button" class="btn btn-link">Owner</button>
+			</td>
+			{% endif %}
+
+			{% endif %}
+			</tr>
+			{% endfor %}
 
 
-</table>
+			</table>
 
-<a href="http://127.0.0.1:8000/online/userinfo/">Return to the userinfo page.</a>
+			<a href="http://127.0.0.1:8000/online/userinfo/">Return to the userinfo page.</a>
+	</div>
+</div>
 </body>
+						<div class="modal fade" id="myModal">
+							  <div class="modal-dialog">
+							    <div class="modal-content">
+							      <div class="modal-header">
+							        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+							        <h4 class="modal-title">Modal title</h4>
+							      </div>
+							      <div class="modal-body">
+							        <form method='post'>
+							        	{% for i in nu %}
+							        	  <div class="checkbox">
+										    <label>
+										      <input type="checkbox" name={{i.id}}> {{i.username}}
+										    </label>
+										  </div>
+										 {% endfor %}
+										 <button type="submit" class="btn btn-default">Submit</button>
+							        </form>
+
+
+							      </div>
+							      <div class="modal-footer">
+							        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							        <button type="button" class="btn btn-primary">Save changes</button>
+							      </div>
+							    </div><!-- /.modal-content -->
+							  </div><!-- /.modal-dialog -->
+						</div><!-- /.modal -->
 </html>

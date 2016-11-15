@@ -9,10 +9,10 @@ from django import forms
 # Create your views here.
 
 class UserForm(forms.Form):
-    username = forms.CharField(label='username',max_length=15)
-    nickname = forms.CharField(label='nickname',max_length=15)    
-    password = forms.CharField(label='password',widget=forms.PasswordInput())  
-    age      = forms.IntegerField(label='age')
+    username1 = forms.CharField(label='username',max_length=15)
+    nickname1 = forms.CharField(label='nickname',max_length=15)    
+    password1 = forms.CharField(label='password',widget=forms.PasswordInput())  
+    age1      = forms.IntegerField(label='age')
     sexChoices=((True,'Man'),(False,'Woman'))
     sex      = forms.ChoiceField(choices=sexChoices,label='sex')    
 
@@ -46,6 +46,7 @@ def regist(request):
 def login(request):
     if request.method =='POST':
         lf = LoginForm(request.POST)
+        uf = UserForm(request.POST)
         if lf.is_valid():
             username = lf.cleaned_data['username']
             password = lf.cleaned_data['password']
@@ -56,8 +57,23 @@ def login(request):
                 return response
             else:
                 return HttpResponseRedirect('/online/login/')
-    else: lf = LoginForm()
-    return render_to_response('login.html',{'lf':lf})
+        if uf.is_valid():
+            username = uf.cleaned_data['username1']
+            nickname = uf.cleaned_data['nickname1']
+            password = uf.cleaned_data['password1']
+            age      = uf.cleaned_data['age1']
+            sex      = uf.cleaned_data['sex']
+            user     = User.objects.filter(username=username)
+            if len(user)>0:
+                return HttpResponse('Regist failed --- User name has already been used.')
+            User.objects.create(username=username,nickname=nickname,password=password,age=age,sex=sex)
+            response = HttpResponseRedirect('/online/userinfo/')
+            response.set_cookie('username',username,3600)
+            return response
+    else:
+        lf = LoginForm()
+        uf = UserForm()
+    return render_to_response('login.html',{'lf':lf,'uf':uf})
     
 def index(request):
     username = request.COOKIES.get('username','')
@@ -71,15 +87,36 @@ def logout(request):
 def userinfo(request):
     username = request.COOKIES.get('username','')
     p = User.objects.get(username = username)
-    password = p.password
     nickname = p.nickname
     age      = p.age
     sex      = p.sex
+    if sex:
+        sexot = 'Man'
+    else:
+        sexot = 'Woman'
     acts     = {}
     for act in p.act_set.all():
         acts[act.id] = act.actname
-    ud={'username':username,'nickname':nickname,'password':password,'age':age,'sex':sex}
-    return render_to_response('userinfo.html',{'ud':ud,'username':username,'acts':acts})
+    ud={'username':username,'nickname':nickname,'age':age,'sex':sexot}
+    
+    nowuser  = User.objects.get(username=username)
+    nowID    = nowuser.id
+    if request.method == 'POST':
+        cf = CreateForm(request.POST)
+        if cf.is_valid():
+            actname = cf.cleaned_data['actname']
+            actdate = cf.cleaned_data['actdate']
+            location= cf.cleaned_data['location']
+            before  = cf.cleaned_data['before']
+            budget  = cf.cleaned_data['budget']
+            cost    = cf.cleaned_data['cost']
+            actnow=Act.objects.create(actname=actname,actdate=actdate,location=location,before=before,budget=budget,cost=cost,owner=nowID)
+            actnow.partner.add(nowuser)            
+            return HttpResponseRedirect('/online/userinfo/')
+    else:
+        cf = CreateForm()    
+    
+    return render_to_response('userinfo.html',{'ud':ud,'username':username,'acts':acts,'nickname':nickname,'cf':cf})
 
 def createact(request):
     username = request.COOKIES.get('username','')
@@ -102,6 +139,7 @@ def createact(request):
     return render_to_response('createact.html',{'cf':cf})
     
 def actinfo(request,actid):
+    username = request.COOKIES.get('username','')
     now = Act.objects.filter(id=actid)
     if len(now)!=0:
         actname = now[0].actname
@@ -114,9 +152,24 @@ def actinfo(request,actid):
         owner   = now[0].owner
         able    = now[0].able
         partner = {}
+        u       = User.objects.get(id=owner)
+        alluser = User.objects.all()
+        nu      = []
         for user in now[0].partner.all():
-            partner[user.id]=user.username
-        return render_to_response('actinfo.html',{'actname':actname,'actdate':actdate,'able':able,'partner':partner})
+            if user.id == u.id: partner[user.id]=user.username+" (Holder)"
+            else: partner[user.id]=user.username
+        for user in alluser:
+            if not user in now[0].partner.all():
+                nu.append(user)
+        if request.method == 'POST':
+           # return HttpResponse('Create Action success.')
+            for key,value in request.POST.items():
+                s = User.objects.get(id=key)
+                if s in nu : now[0].partner.add(s)
+                else:        now[0].partner.remove(s)
+            now[0].save()
+            return HttpResponseRedirect('/online/actinfo/'+actid)
+        return render_to_response('actinfo.html',{'actname':actname,'actdate':actdate,'able':able,'partner':partner,'u':u,'username':username,'nu':nu,'owner':owner})
     return HttpResponse('Wrong Action ID!')
     
         

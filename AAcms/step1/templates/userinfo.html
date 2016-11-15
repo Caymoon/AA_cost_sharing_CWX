@@ -4,7 +4,9 @@
 {% load staticfiles %}
 <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
 <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap-theme.min.css' %}">
-<link rel="stylesheet" href="{% static 'bootstrap/css/mycss.css' %}"
+<link rel="stylesheet" href="{% static 'bootstrap/css/mycss.css' %}">
+<script src="{% static 'bootstrap/js/jquery.min.js' %}"></script>
+<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
 <!-- 引入boorstrap -->
 
 <head>
@@ -13,35 +15,70 @@
 </head>
 
 <body>
-<h1>welcome {{username}} !</h1>
-<br>
 
-<h4>Here is your infomation:</h4>
-<table>
-{% for key,value in ud.items %}
-<tr>
-<td>{{key}}</td>
-<td>{{value}}</td>
-</tr>
-{% endfor %}
-</table>
-<h4>You will attemp the following actions:</h4>
-<table>
-<tr>
-	<td>ActID</td><td>ActName</td>
-</tr>
-{% for key,value in acts.items %}
-<tr>
-<td>{{key}}</td>
-<td>{{value}}</td>
-<td><a href="http://127.0.0.1:8000/online/actinfo/{{key}}">Show more</a></td>
-</tr>
-{% endfor %}
+<div class="jumbotron">
+	<div class="container">
+
+	<h1>Welcome {{ nickname }} !</h1>
+	<br>
+
+	<h4>Here is your infomation:</h4>
+
+	<table class="table table-hover">
+		{% for key,value in ud.items %}
+			<tr>
+				<td>{{key}}</td>
+				<td>{{value}}</td>
+			</tr>
+		{% endfor %}
+	</table>
+
+	<h4>You will attemp the following actions:</h4>
+		<table class="table table-hover">
+		<tr>
+			<td>ActID</td><td>ActName</td><td>Details</td>
+		</tr>
+		{% for key,value in acts.items %}
+		<tr>
+		<td>{{key}}</td>
+		<td>{{value}}</td>
+		<td><a href="http://127.0.0.1:8000/online/actinfo/{{key}}">Show more</a></td>
+		</tr>
+		{% endfor %}
 
 
-</table>
+	</table>
 
-<a href="http://127.0.0.1:8000/online/createact/">Create an action</a>
-<a href="http://127.0.0.1:8000/online/logout/">EXIT</a>
+	<button type="button" class="btn btn-primary btn" data-toggle="modal" data-target="#myModal">
+  								Create an action
+	</button>
+
+	<a class="btn btn-default" href="http://127.0.0.1:8000/online/logout/"role="button">Sign out</a>
+</div>
+</div>
 </body>
+
+ 						<div class="modal fade" id="myModal">
+							  <div class="modal-dialog">
+							    <div class="modal-content">
+							      <div class="modal-header">
+							        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+							        <h4 class="modal-title">Modal title</h4>
+							      </div>
+							      <div class="modal-body">
+							        <form method = 'post' enctype="multipart/form-data">
+									       {{cf.as_p}}
+									    <input type="submit" value = "Create now!" />
+									</form>
+
+
+							      </div>
+							      <div class="modal-footer">
+							        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							        <button type="button" class="btn btn-primary">Save changes</button>
+							      </div>
+							    </div><!-- /.modal-content -->
+							  </div><!-- /.modal-dialog -->
+						</div><!-- /.modal -->
+
 </html>
