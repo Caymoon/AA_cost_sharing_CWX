@@ -23,13 +23,13 @@
 			<br>
 			<h3>The action will be held on {{actdate}}. Located at {{location}}</h3>
 			<h3>The budget is ${{budget}}, you have recived ${{recive}}</h3>
-			<h3>
+			
 				{% if able == True%}
-					The action is still running...
+					<h3>The action is still running...</h3>
 				{%else%}
-					The action has already finished!
+					<h3 style="color:#FF0000">The action has already finished!</h3>
 				{%endif%}
-			</h3>
+			
 			</br>
 			</br>
 			<h3>These user will attend:</h3>
