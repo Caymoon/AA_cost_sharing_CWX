@@ -11,6 +11,7 @@ class User(models.Model):
     age      = models.IntegerField()
     sex      = models.BooleanField()    
     
+    
     def __unicode__(self):
         return self.username
 
@@ -25,7 +26,7 @@ class Act(models.Model):
     owner   = models.IntegerField()
     partner = models.ManyToManyField(User)
     able    = models.BooleanField(default=True)
-    
+    accept  = models.ManyToManyField(User,related_name='accept_acts')
     def __unicode__(self):
         return self.actname
     

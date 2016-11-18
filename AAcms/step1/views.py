@@ -95,6 +95,7 @@ def userinfo(request):
     nickname = p.nickname
     age      = p.age
     sex      = p.sex
+
     if sex:
         sexot = 'Man'
     else:
@@ -145,7 +146,8 @@ def createact(request):
     
 def actinfo(request,actid):
     username = request.COOKIES.get('username','')
-    now = Act.objects.filter(id=actid)
+    nowuser  = User.objects.get(username=username)
+    now      = Act.objects.filter(id=actid)
     if len(now)!=0:
         actname = now[0].actname
         actdate = now[0].actdate
@@ -160,6 +162,12 @@ def actinfo(request,actid):
         u       = User.objects.get(id=owner)
         alluser = User.objects.all()
         nu      = []
+        flag    = nowuser in now[0].accept.all()
+        num1    = len(now[0].partner.all())
+        num2    = len(now[0].accept.all())
+        num3    = num1-num2
+        fflag   = (num1*3 <= num2*4)
+
         for user in now[0].partner.all():
             if user.id == u.id: partner[user.id]=user.username+" (Owner)"
             else: partner[user.id]=user.username
@@ -173,14 +181,40 @@ def actinfo(request,actid):
                     now[0].able = False
                     now[0].save()
                     return HttpResponseRedirect('/online/actinfo/'+actid)
+
+                if key == 'exit':
+                	now[0].partner.remove(nowuser)
+                	now[0].accept.remove(nowuser)
+                	now[0].save()
+                	return HttpResponseRedirect('/online/actinfo/'+actid)
+
+                if key == 'join':
+                	now[0].partner.add(nowuser)
+                	now[0].save()
+                	return HttpResponseRedirect('/online/actinfo/'+actid)
+
+                if key == 'accept':
+                	now[0].accept.add(nowuser)
+                	now[0].save()
+                	return HttpResponseRedirect('/online/actinfo/'+actid)
+
+                if key == 'refuse':
+                	now[0].accept.remove(nowuser)
+                	now[0].save()
+                	return HttpResponseRedirect('/online/actinfo/'+actid)
+
                 s = User.objects.get(id=key)
                 if s in nu : now[0].partner.add(s)
-                else:        now[0].partner.remove(s)
+                else:  
+                	now[0].partner.remove(s)
+                	now[0].accept.remove(s)
             now[0].save()
             return HttpResponseRedirect('/online/actinfo/'+actid)
         nd=budget-recive
         pnd=nd/len(partner)
-        return render_to_response('actinfo.html',{'pnd':pnd,'actname':actname,'actdate':actdate,'able':able,'partner':partner,'u':u,'username':username,'nu':nu,'owner':owner,'budget':budget,'location':location,'recive':recive,'nd':nd})
+        return render_to_response('actinfo.html',{'pnd':pnd,'actname':actname,'actdate':actdate,'able':able,'partner':partner,\
+        	'u':u,'username':username,'nu':nu,'owner':owner,'budget':budget,'location':location,'recive':recive,'nd':nd,\
+        	'cost':cost,'now':now,'nowuser':nowuser,'flag':flag,'fflag':flag,'num1':num1,'num2':num2,'num3':num3})
     return HttpResponse('Wrong Action ID!')
     
         
