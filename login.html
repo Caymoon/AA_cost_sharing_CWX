@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+{% load staticfiles %}
+<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap-theme.min.css' %}">
+<link rel="stylesheet" href="{% static 'bootstrap/css/mycss.css' %}">
+<script src="{% static 'bootstrap/js/jquery.min.js' %}"></script>
+<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+
+<div class="container-fluid">
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+
+		</div>
+	</div>
+
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+		<div class="col-md-offset-0">
+		
+		<div class="panel panel-success">
+    	<div class="panel-heading">
+        <h3 class="panel-title">Sign in now!</h3>
+    	</div>
+    	<div class="panel-body">
+    	 	<div class="col-sm-offset-4">
+			<form class="form-horizontal" role="form" method = 'post'>
+				<h2 class="form-horizontal-heading">Please sign in</h2>
+				<div class="form-group">
+					 <label for="id_username" class="control-label">Username</label>
+					<!--<div class="col-sm-3">
+						<input type="text" class="form-control" id="inputEmail3" />
+					</div>-->
+					{{lf.username}}
+				</div>
+				<div class="form-group">
+					 <label for="id_password" class="control-label">Password</label>
+					<!--<div class="col-sm-3">
+						<input type="password" class="form-control" id="inputPassword3" />
+					</div>-->
+					{{lf.password}}
+				</div>
+			<!--	<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-3">
+						<div class="checkbox">
+							 <label><input type="checkbox" />Remember me</label>
+						</div>
+					</div>
+				</div>-->
+				<div class="form-group">
+						 <button type="submit" class="btn btn-default">Sign in</button>	
+						 <button type="button" class="btn btn-primary btn" data-toggle="modal" data-target="#myModal">
+  								Sign up
+						</button>
+				
+				</div>
+			</form>
+			</div>
+			</div>
+			</div>
+		</div>
+		</div>
+	</div>
+</div>
+ 						<div class="modal fade" id="myModal">
+							  <div class="modal-dialog">
+							    <div class="modal-content">
+							      <div class="modal-header">
+							        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+							        <h4 class="modal-title">Sign up</h4>
+							      </div>
+							      <div class="modal-body">
+							        <form method = "post" enctype="multipart/form-data">
+									       {{uf.as_p}}
+									    <input type="submit" value = "Sign up!" method="SUP"/>
+									</form>
+
+
+							      </div>
+							      <div class="modal-footer">
+							        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							        
+							      </div>
+							    </div><!-- /.modal-content -->
+							  </div><!-- /.modal-dialog -->
+						</div><!-- /.modal -->
+
+</html>
