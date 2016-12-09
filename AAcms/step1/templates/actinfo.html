@@ -19,7 +19,7 @@
 	<div class="container">
 
 			<body>
-			<h1>The infomation of action {{actname}} !</h1>
+			<h1>The information of action {{actname}} !</h1>
 			<br>
 		<!--	<h3>The action will be held on {{actdate}}. Located at {{location}}</h3>
 			<h3>The budget is ${{budget}}, you have recived ${{recive}}</h3> -->
@@ -38,7 +38,7 @@
 				<tr><td>Act Date</td><td>{{actdate}}</td><td> </td></tr>
 				<tr><td>Act Budget</td><td>${{budget}}</td><td> </td></tr>
 				<tr><td>Act Cost</td><td>${{cost}}</td>
-					<td>{%if able%}{% if not flag %}
+					<td>{%if able%}{%if not nowuser in nu%}{% if not flag %}
 						<form method='post'>
 						<button type="submit" class="btn btn-link" name="accept">Accept</button>
 						</form>
@@ -48,7 +48,7 @@
 						</form>
 					{%endif%}
 					{%endif%}
-					  
+					{%endif%}
 				</td>
 				</tr>
 				<tr><td>Act Received</td><td>${{recive}}</td><td> </td></tr>

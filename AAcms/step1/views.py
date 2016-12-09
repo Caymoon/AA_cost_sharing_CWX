@@ -30,21 +30,7 @@ class CreateForm(forms.Form):
     budget  = forms.FloatField(label='budget')
     cost    = forms.FloatField(label='cost')
 
-def regist(request):
-    if request.method == 'POST':
-        uf = UserForm(request.POST)
-        if uf.is_valid():
-            username = uf.cleaned_data['username']
-            nickname = uf.cleaned_data['nickname']
-            password = uf.cleaned_data['password']
-            age      = uf.cleaned_data['age']
-            sex      = uf.cleaned_data['sex']
-            User.objects.create(username=username,nickname=nickname,password=password,age=age,sex=sex)
-            return HttpResponse('Regist success.')
-    else:
-        uf=UserForm()
-    return render_to_response('regist.html',{'uf':uf})
-    
+
 def login(request):
     username = request.COOKIES.get('username','')
     if username:
@@ -80,9 +66,11 @@ def login(request):
         uf = UserForm()
     return render_to_response('login.html',{'lf':lf,'uf':uf})
     
-def index(request):
+'''def index(request):
     username = request.COOKIES.get('username','')
-    return render_to_response('index.html',{'username':username})
+    return render_to_response('index.html',{'username':username})'''
+def index(request):
+    return render_to_response('index.html')
     
 def logout(request):
     response = HttpResponseRedirect('/online/login/')
@@ -123,26 +111,6 @@ def userinfo(request):
         cf = CreateForm()    
     
     return render_to_response('userinfo.html',{'ud':ud,'username':username,'acts':acts,'nickname':nickname,'cf':cf})
-
-def createact(request):
-    username = request.COOKIES.get('username','')
-    nowuser  = User.objects.get(username=username)
-    nowID    = nowuser.id
-    if request.method == 'POST':
-        cf = CreateForm(request.POST)
-        if cf.is_valid():
-            actname = cf.cleaned_data['actname']
-            actdate = cf.cleaned_data['actdate']
-            location= cf.cleaned_data['location']
-            before  = cf.cleaned_data['before']
-            budget  = cf.cleaned_data['budget']
-            cost    = cf.cleaned_data['cost']
-            actnow=Act.objects.create(actname=actname,actdate=actdate,location=location,before=before,budget=budget,cost=cost,owner=nowID)
-            actnow.partner.add(nowuser)            
-            return HttpResponse('Create Action success.')
-    else:
-        cf = CreateForm()
-    return render_to_response('createact.html',{'cf':cf})
     
 def actinfo(request,actid):
     username = request.COOKIES.get('username','')
@@ -214,10 +182,42 @@ def actinfo(request,actid):
         pnd=nd/len(partner)
         return render_to_response('actinfo.html',{'pnd':pnd,'actname':actname,'actdate':actdate,'able':able,'partner':partner,\
         	'u':u,'username':username,'nu':nu,'owner':owner,'budget':budget,'location':location,'recive':recive,'nd':nd,\
-        	'cost':cost,'now':now,'nowuser':nowuser,'flag':flag,'fflag':flag,'num1':num1,'num2':num2,'num3':num3})
+        	'cost':cost,'now':now,'nowuser':nowuser,'flag':flag,'fflag':fflag,'num1':num1,'num2':num2,'num3':num3})
     return HttpResponse('Wrong Action ID!')
+
+
+
+def userinfo_new(request):
+    username = request.COOKIES.get('username','')
+    p = User.objects.get(username = username)
+    nickname = p.nickname
+    age      = p.age
+    sex      = p.sex
+
+    if sex:
+        sexot = 'Man'
+    else:
+        sexot = 'Woman'
+    acts     = {}
+    for act in p.act_set.all():
+        acts[act.id] = act.actname
+    ud={'username':username,'nickname':nickname,'age':age,'sex':sexot}
     
-        
-            
-        
+    nowuser  = User.objects.get(username=username)
+    nowID    = nowuser.id
+    if request.method == 'POST':
+        cf = CreateForm(request.POST)
+        if cf.is_valid():
+            actname = cf.cleaned_data['actname']
+            actdate = cf.cleaned_data['actdate']
+            location= cf.cleaned_data['location']
+            before  = cf.cleaned_data['before']
+            budget  = cf.cleaned_data['budget']
+            cost    = cf.cleaned_data['cost']
+            actnow=Act.objects.create(actname=actname,actdate=actdate,location=location,before=before,budget=budget,cost=cost,owner=nowID)
+            actnow.partner.add(nowuser)            
+            return HttpResponseRedirect('/online/userinfo_new/')
+    else:
+        cf = CreateForm()    
     
+    return render_to_response('userinfo_new.html',{'ud':ud,'username':username,'acts':acts,'nickname':nickname,'cf':cf})
