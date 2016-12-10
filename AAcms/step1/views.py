@@ -44,7 +44,7 @@ def login(request):
             user = User.objects.filter(username__exact = username,password__exact = password)
             if user:
                 response = HttpResponseRedirect('/online/userinfo/')
-                response.set_cookie('username',username,3600)
+                response.set_cookie('username',username,36000)
                 return response
             else:
                 return HttpResponseRedirect('/online/login/')
@@ -59,7 +59,7 @@ def login(request):
                 return HttpResponse('Regist failed --- User name has already been used.')
             User.objects.create(username=username,nickname=nickname,password=password,age=age,sex=sex)
             response = HttpResponseRedirect('/online/userinfo/')
-            response.set_cookie('username',username,3600)
+            response.set_cookie('username',username,36000)
             return response
     else:
         lf = LoginForm()
@@ -219,5 +219,16 @@ def userinfo_new(request):
             return HttpResponseRedirect('/online/userinfo_new/')
     else:
         cf = CreateForm()    
-    
-    return render_to_response('userinfo_new.html',{'ud':ud,'username':username,'acts':acts,'nickname':nickname,'cf':cf})
+    acts_id=acts.keys()
+    acts_id.sort()
+    acts_list=[]
+    cost=0.0
+    for i in acts_id:
+        act_now=Act.objects.get(id=i)
+        owner_name=User.objects.get(id=act_now.owner).username
+        acts_list.append( (i,act_now.actname,owner_name,act_now.actdate,act_now.able) )
+        pnum=len(act_now.partner.all())
+        if not act_now.able:
+            cost=cost+act_now.cost/pnum
+    acts_num=len(acts_list)
+    return render_to_response('userinfo_new.html',{'cost':cost,'ud':ud,'username':username,'acts':acts_list,'nickname':nickname,'cf':cf,'acts_id':acts_id,'acts_num':acts_num,})

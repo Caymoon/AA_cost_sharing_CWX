@@ -94,6 +94,7 @@
 
 
 			</table>
+			{%if able%}
 			{% if nowuser in nu %}
 			<form method='post'>
 			<button type="submit" class="btn btn-primary btn" name="join">Join the activity</button>
@@ -106,8 +107,9 @@
 			</form>
 			{%endif%}
 			{%endif%}
+			{%endif%}
 			</br></br>
-			<a href="http://127.0.0.1:8000/online/userinfo/">Return to the userinfo page.</a>
+			<a href="http://127.0.0.1:8000/online/userinfo_new/">Return to the userinfo page.</a>
 	</div>
 </div>
 </body>
