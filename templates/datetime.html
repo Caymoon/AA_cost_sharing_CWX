@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}The current time{% endblock %}
+
+{% block content %}
+<p>It is {{time}}.</p>
+{% endblock %}
+
+{% block footer %}
+{{ block.super }}
+{{ block.super }}
+	<hr>
+	<p>biubiubiu !!!</p>
+{{ block.super }}
+{% endblock %}
