@@ -2,12 +2,6 @@ from __future__ import unicode_literals
 
 from django.db import models
 
-
-import sys
-default_encoding = 'utf-8'
-if sys.getdefaultencoding() != default_encoding:
-    reload(sys)
-    sys.setdefaultencoding(default_encoding)
 # Create your models here.
 
 class User(models.Model):
@@ -16,7 +10,6 @@ class User(models.Model):
     password = models.CharField(max_length=20)
     age      = models.IntegerField()
     sex      = models.BooleanField()    
-    avatar   = models.ImageField(upload_to='avatars/',default='avatars/huaji2')
     
     def __unicode__(self):
         return self.username
@@ -32,9 +25,7 @@ class Act(models.Model):
     owner   = models.IntegerField()
     partner = models.ManyToManyField(User)
     able    = models.BooleanField(default=True)
-    accept  = models.ManyToManyField(User,related_name='accept_acts')
-    status  = models.IntegerField(default=0)
-    tp      = models.IntegerField(default=0)
+    
     def __unicode__(self):
         return self.actname
     
