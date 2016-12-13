@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="{% static 'bootstrap/css/mycss.css' %}">
 <script src="{% static 'bootstrap/js/jquery.min.js' %}"></script>
 <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
-<!-- 引入boorstrap -->
+
 
 
 <head>
@@ -19,19 +19,14 @@
 	<div class="container">
 
 			<body>
-			<h1>The infomation of action {{actname}} !</h1>
-			<br>
-			<h3>The action will be held on {{actdate}}. Located at {{location}}</h3>
-			<h3>The budget is ${{budget}}, you have recived ${{recive}}</h3>
+
 			
 				{% if able == True%}
 					<h3>The action is still running...</h3>
 				{%else%}
 					<h3 style="color:#FF0000">The action has already finished!</h3>
 				{%endif%}
-			
-			</br>
-			</br>
+		
 			<h3>These user will attend:</h3>
 			<table class="table table-hover">
 			<tr>
@@ -42,8 +37,6 @@
 					<button type="button" class="btn btn-primary btn" data-toggle="modal" data-target="#myModal">Add new users</button>
 					<button type="button" class="btn btn-danger btn" data-toggle="modal" data-target="#myModal2">Gathering</button>
 
-
-
 					<td>Operation</td>
 				{% endif %}
 				{% endif %}
@@ -52,7 +45,7 @@
 			<tr>
 			<td>{{key}}</td>
 			<td>{{value}}</td>
-			{% if able == True%}
+
 			{% if username == u.username %}
 			{% if key != owner %}
 			<td>
@@ -75,10 +68,6 @@
 
 			</table>
 
-			<a href="http://127.0.0.1:8000/online/userinfo/">Return to the userinfo page.</a>
-	</div>
-</div>
-</body>
 						<div class="modal fade" id="myModal">
 							  <div class="modal-dialog">
 							    <div class="modal-content">
@@ -119,11 +108,12 @@
 							      <div class="modal-body">
 							        	${{nd}} needs to be gathered.</br>
 							        	Per person needs to pay ${{pnd}}</br>
+
 							        	Confirm to close the actiton?
 							      </div>
 							      <div class="modal-footer">
 							      	<form method='post'>
-							      		<button type="submit" class="btn btn-primary" name="yes">Yes</button>
+
 							      		<button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
 							      	</form>
 							        
