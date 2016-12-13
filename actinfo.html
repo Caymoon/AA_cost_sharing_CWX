@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+{% load staticfiles %}
+<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap-theme.min.css' %}">
+<link rel="stylesheet" href="{% static 'bootstrap/css/mycss.css' %}">
+<script src="{% static 'bootstrap/js/jquery.min.js' %}"></script>
+<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+<!-- 引入boorstrap -->
+
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title></title>
+</head>
+
+<div class="jumbotron">
+	<div class="container">
+
+			<body>
+			<h1>The information of action {{actname}} !</h1>
+			<br>
+		<!--	<h3>The action will be held on {{actdate}}. Located at {{location}}</h3>
+			<h3>The budget is ${{budget}}, you have recived ${{recive}}</h3> -->
+			
+				{% if able == True%}
+					<h3>The action is still running...</h3>
+				{%else%}
+					<h3 style="color:#FF0000">The action has already finished!</h3>
+				{%endif%}
+			
+			</br>
+
+
+			<table class="table table-hover">
+				<tr><td>Act Name</td><td>{{actname}}</td><td> </td></tr>
+				<tr><td>Act Date</td><td>{{actdate}}</td><td> </td></tr>
+				<tr><td>Act Budget</td><td>${{budget}}</td><td> </td></tr>
+				<tr><td>Act Cost</td><td>${{cost}}</td>
+					<td>{%if able%}{%if not nowuser in nu%}{% if not flag %}
+						<form method='post'>
+						<button type="submit" class="btn btn-link" name="accept">Accept</button>
+						</form>
+					{%else%}
+						<form method='post'>
+						<button type="submit" class="btn btn-link" name="refuse">Refuse</button>
+						</form>
+					{%endif%}
+					{%endif%}
+					{%endif%}
+				</td>
+				</tr>
+				<tr><td>Act Received</td><td>${{recive}}</td><td> </td></tr>
+			</table>
+
+			</br>
+			<h3>These user will attend:</h3>
+			<table class="table table-hover">
+			<tr>
+				<td>User ID</td>
+				<td>User name</td>
+				{% if able == True%}
+				{% if username == u.username%}
+					<button type="button" class="btn btn-primary btn" data-toggle="modal" data-target="#myModal">Add new users</button>
+					<button type="button" class="btn btn-danger btn" data-toggle="modal" data-target="#myModal2">Gathering</button>
+					<td>Operation</td>
+				{% endif %}
+				{% endif %}
+			</tr>
+			{% for key,value in partner.items %}
+			<tr>
+			<td>{{key}}</td>
+			<td>{{value}}</td>
+			{% if able %}
+			{% if username == u.username %}
+			{% if key != owner %}
+			<td>
+				<form method="post">    
+    			<input type="submit" name={{key}} value="Delete" class="btn btn-link">
+				</form>
+			</td>
+			{% endif %}
+
+          {% if key == owner %}
+			<td>
+				<button type="button" class="btn btn-link">Owner</button>
+			</td>
+			{% endif %}
+			{% endif %}
+			{% endif %}
+			</tr>
+			{% endfor %}
+
+
+			</table>
+			{%if able%}
+			{% if nowuser in nu %}
+			<form method='post'>
+			<button type="submit" class="btn btn-primary btn" name="join">Join the activity</button>
+		</form>
+			{%else%}
+
+			{% if not username == u.username %}
+			<form method='post'>
+			<button type="submit" class="btn btn-danger btn" name="exit">Exit the activity</button>
+			</form>
+			{%endif%}
+			{%endif%}
+			{%endif%}
+			</br></br>
+			<a href="http://127.0.0.1:8000/online/userinfo_new/">Return to the userinfo page.</a>
+	</div>
+</div>
+</body>
+						<div class="modal fade" id="myModal">
+							  <div class="modal-dialog">
+							    <div class="modal-content">
+							      <div class="modal-header">
+							        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+							        <h4 class="modal-title">Add new users</h4>
+							      </div>
+							      <div class="modal-body">
+							        <form method='post'>
+							        	Please select the user you want to add.</br>
+							        	{% for i in nu %}
+							        	  <div class="checkbox">
+										    <label>
+										      <input type="checkbox" name={{i.id}}> {{i.nickname}} ({{i.username}})
+										    </label>
+										  </div>
+										 {% endfor %}
+										 <button type="submit" class="btn btn-default">Submit</button>
+							        </form>
+
+
+							      </div>
+							      <div class="modal-footer">
+							        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							     
+							      </div>
+							    </div><!-- /.modal-content -->
+							  </div><!-- /.modal-dialog -->
+						</div><!-- /.modal -->
+
+						<div class="modal fade" id="myModal2">
+							  <div class="modal-dialog">
+							    <div class="modal-content">
+							      <div class="modal-header">
+							        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+							        <h4 class="modal-title">Gathering</h4>
+							      </div>
+							      <div class="modal-body">
+							        	${{nd}} needs to be gathered.</br>
+							        	Per person needs to pay ${{pnd}}</br>
+							        	{{num2}} people accept, and {{num3}} people refuse</br>
+							        	Confirm to close the actiton?
+							      </div>
+							      <div class="modal-footer">
+							      	<form method='post'>
+							      		{%if fflag%}
+							      		<button type="submit" class="btn btn-primary" name="yes">Yes</button>
+							      		{%else%}
+							      		Note:The number of people accept the cost is less than 75%, please check again!
+							      		{%endif%}
+							      		<button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+							      	</form>
+							        
+							   
+							      </div>
+							    </div><!-- /.modal-content -->
+							  </div><!-- /.modal-dialog -->
+						</div><!-- /.modal -->
+</html>
