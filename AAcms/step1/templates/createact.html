@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+{% load staticfiles %}
+<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap-theme.min.css' %}">
+<link rel="stylesheet" href="{% static 'bootstrap/css/mycss.css' %}">
+<script src="{% static 'bootstrap/js/jquery.min.js' %}"></script>
+<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+<!-- 引入boorstrap -->
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Creat an action</title>
+</head>
+
+<body>
+<h1>Create Action Page:</h1>
+<form method = 'post' enctype="multipart/form-data">
+       {{cf.as_p}}
+    <input type="submit" value = "ok" />
+</form>
+<br>
+<a href="http://127.0.0.1:8000/online/userinfo/">BACK</a>
+</body>
+</html>
