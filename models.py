@@ -13,6 +13,7 @@ class User(models.Model):
     
     def __unicode__(self):
         return self.username
+        
 
 class Act(models.Model):
     actname = models.CharField(max_length=15)
@@ -25,7 +26,11 @@ class Act(models.Model):
     owner   = models.IntegerField()
     partner = models.ManyToManyField(User)
     able    = models.BooleanField(default=True)
+    accept  = models.ManyToManyField(User,related_name='accept_acts')
     
     def __unicode__(self):
         return self.actname
+        
+        
+        
     
