@@ -148,7 +148,7 @@
                         <li class="dropdown user user-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-user"></i>
-                                <span>{{ nickname }} <i class="caret"></i></span>
+                                <span>{{ nowuser.nickname }} <i class="caret"></i></span>
                             </a>
                             <ul class="dropdown-menu dropdown-custom dropdown-menu-right">
                                 <li class="dropdown-header text-center">Account</li>
@@ -198,15 +198,15 @@
                             <!-- Sidebar user panel -->
                             <div class="user-panel">
                                 <div class="pull-left image">
-                                    <img src="{{p.avatar.url}}" class="img-circle" alt="User Image" />
+                                    <img src={{nowuser.avatar.url}} class="img-circle" alt="User Image" />
                                 </div>
                                 <div class="pull-left info">
-                                    <p>Hello, {{p.nickname}}</p>
+                                    <p>Hello, {{nowuser.nickname}}</p>
 
                                     <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
                                 </div>
                             </div>
-                            <!-- search form -->
+                           <!-- search form -->
                             <form action="#" method="get" class="sidebar-form">
                                 <div class="input-group">
                                     <input type="text" name="q" class="form-control" placeholder="搜索活动ID……"/>
@@ -218,13 +218,13 @@
                             <!-- /.search form -->
                             <!-- sidebar menu: : style can be found in sidebar.less -->
                             <ul class="sidebar-menu">
-                                <li class="active">
+                                <li>
                                     <a href="http://127.0.0.1:8000/online/userinfo_new/">
                                         <i class="fa fa-child"></i> <span>我的活动</span>
                                     </a>
                                 </li>
-                                <li>
-                                    <a href="http://127.0.0.1:8000/online/actinfo_new/">
+                                <li class="active">
+                                    <a href="#">
                                         <i class="fa fa-tasks"></i> <span>活动信息</span>
                                     </a>
                                 </li>
@@ -235,7 +235,7 @@
                                     </a>
                                 </li>
 
-                                
+                        
 
                             </ul>
                         </section>
@@ -247,15 +247,79 @@
                 <!-- Main content -->
                 <section class="content">
 
+                    <div class="row">
+                        <div class="col-md-12">
+                            {% if able %}
+                                {% if username == u.username %}
+                                        <div class="alert alert-info ">
+                                            <button data-dismiss="alert" class="close close-sm" type="button">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                            该活动正在<strong>进行中</strong>，你可以对此活动进行管理。
+                                        </div>
+                                {% else %}
+                                        <div class="alert alert-info ">
+                                            <button data-dismiss="alert" class="close close-sm" type="button">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                            该活动正在<strong>进行中</strong>，请等待举办者进一步通知。
+                                        </div>
+
+                                {% endif %}
+
+                            {% else %}
+                                         <div class="alert alert-block alert-danger ">
+                                            <button data-dismiss="alert" class="close close-sm" type="button">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                            该活动已经<strong>结束啦</strong>，但你仍可在此页面查看活动信息。
+                                        </div>
+                            {% endif %}
+                        </div>
+
+                    </div>
+
+                    {%if able %}
+                        {% if username == u.username %}
+                            <div class="row">
+                                <div class="col-md-12">
+                                    {% if fflag %}
+                                         <form class="form-inline" role="form" method="post">
+                                        <div class="alert alert-success ">
+                                           
+                                        <button data-dismiss="alert" class="close close-sm" type="button">
+                                                <i class="fa fa-times"></i>
+                                        </button>        
+                                            {{num2}}位用户同意支付，{{num3}}位用户尚未同意，该活动可以<strong>收款</strong>，是否要进行收款？
+                                                <div class="close close-sm">&nbsp&nbsp&nbsp&nbsp&nbsp</div>
+                                                <button type="submit" class="close close-sm" name="yes"><i class="fa fa-check"></i></button>
+                                            
+                                        
+                                        </div>
+                                        </form>
+                                    {% else %}
+                                        <div class="alert alert-danger ">
+                                            <button data-dismiss="alert" class="close close-sm" type="button">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                            {{num2}}位用户同意支付，{{num3}}位用户尚未同意，至少还需要<strong>{{num4}}</strong>位用户同意才可进行收款。
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {%endif%}
+
+
                     <div class="row" style="margin-bottom:5px;">
 
 
                         <div class="col-md-4">
                             <div class="sm-st clearfix">
-                                <span class="sm-st-icon st-red"><i class="fa fa-check-square-o"></i></span>
+                                <span class="sm-st-icon st-red"><i class="fa fa-pencil"></i></span>
                                 <div class="sm-st-info">
-                                    <span>{{acts_num}}</span>
-                                    活动数目
+                                    <span>{{actname}}</span>
+                                    活动名称
                                 </div>
                             </div>
                         </div>
@@ -264,8 +328,27 @@
                             <div class="sm-st clearfix">
                                 <span class="sm-st-icon st-blue"><i class="fa fa-dollar"></i></span>
                                 <div class="sm-st-info">
-                                    <span>{{cost}}</span>
-                                    历史花销
+                                    <span>{{pnd}}</span>
+                                    {%if able%}
+                                    {%if not nowuser in nu%}
+                                    {% if not flag %}
+                        <form method='post'>
+                        <form method='post'>
+                        <div class="label label-danger ">您尚未同意支付此开销</div> 
+                        <button type="submit" class="btn btn-success btn-xs" name="accept"><i class="fa fa-check"></i></button>
+                        </form>
+                        </form>
+                    {%else%}
+                        
+                        <form method='post'>
+                        <div class="label label-success ">您已同意支付此开销</div> 
+                        <button type="submit" class="btn btn-danger btn-xs" name="refuse"><i class="fa fa-times"></i></button>
+                        </form>
+                    {%endif%}
+                    {%endif%}
+                    {%else%}
+                    人均花销
+                    {%endif%}
                                 </div>
                             </div>
                         </div>
@@ -273,10 +356,10 @@
 
                         <div class="col-md-4">
                             <div class="sm-st clearfix">
-                                <span class="sm-st-icon st-violet"><i class="fa fa-envelope-o"></i></span>
+                                <span class="sm-st-icon st-violet"><i class="fa fa-users"></i></span>
                                 <div class="sm-st-info">
-                                    <span>2200</span>
-                                    通知数目
+                                    <span>{{num1}}</span>
+                                    参与人数
                                 </div>
                             </div>
                         </div>
@@ -295,107 +378,104 @@
                 <div class="col-md-12">
                     <section class="panel">
                               <header class="panel-heading">
-                                  我参加的活动
+                                  参加活动的用户
                             </header>
                             <div class="panel-body table-responsive">
+                                {% if able %}
+                                {% if username == u.username %}
                                 <a href="#myModal" data-toggle="modal" class="btn btn-success  pull-left">
-                                      创建新活动
+                                      添加新用户
                                 </a>
+                                <br/>
+                                  <br/>
+                                {%endif%}
+                                {%endif%}
                                 <div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade">
                                       <div class="modal-dialog">
                                           <div class="modal-content">
                                               <div class="modal-header">
                                                   <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
-                                                  <h4 class="modal-title">新的活动喔</h4>
+                                                  <h4 class="modal-title">新的用户喔</h4>
                                               </div>
                                               <div class="modal-body">
 
-                                                  <form method="post" role="form" action="/online/add_action/">
-
-
-
-                                                        <div class="radio">
-                                                          <label>
-                                                              <input type="radio" name="before" id="optionsRadios1" value="0" checked="">
-                                                              事先付款
-                                                          </label>
-                                                        </div>
-                                                        <div class="radio">
-                                                          <label>
-                                                              <input type="radio" name="before" id="optionsRadios2" value="1">
-                                                              事后付款
-                                                          </label>
-                                                        </div>
-
-                                                        <div class="radio">
-                                                          <label>
-                                                              <input type="radio" name="tp" id="optionsRadios1" value="0" checked="">
-                                                              设置总花费
-                                                          </label>
-                                                        </div>
-                                                        <div class="radio">
-                                                          <label>
-                                                          
-                                                              <input type="radio" name="tp" id="optionsRadios2" value="1">
-                                                              设置平均花费
-                                                          </label>
-                                                        </div>
-                                                        <button type="submit" class="btn btn-default">Submit</button>
-                                                     <!-- <div class="form-group">
-                                                          <label for="exampleInputEmail1">Email address</label>
-                                                          <input type="email" class="form-control" id="exampleInputEmail3" placeholder="Enter email">
-                                                      </div>
-                                                      <div class="form-group">
-                                                          <label for="exampleInputPassword1">Password</label>
-                                                          <input type="password" class="form-control" id="exampleInputPassword3" placeholder="Password">
-                                                      </div>
-                                                      <div class="form-group">
-                                                          <label for="exampleInputFile">File input</label>
-                                                          <input type="file" id="exampleInputFile3">
-                                                          <p class="help-block">Example block-level help text here.</p>
-                                                      </div>
-                                                      <div class="checkbox">
-                                                          <label>
-                                                              <input type="checkbox"> Check me out
-                                                          </label>
-                                                      </div> !{{cf.as_p}}
-                                                      <button type="submit" class="btn btn-default">Submit</button>!-->
+                                                  <form method="post" role="form">
+                                                   
+                                                            选择你想要添加的用户</br>
+                                                            {% for i in nu %}
+                                                              <div class="checkbox">
+                                                                <label>
+                                                                  <input type="checkbox" name={{i.id}}> {{i.nickname}} ({{i.username}})
+                                                                </label>
+                                                              </div>
+                                                             {% endfor %}
+                                         
+                                                      <button type="submit" class="btn btn-default">Submit</button>
                                                   </form>
                                               </div>
                                           </div>
                                       </div>
                                   </div>
-                                  <br/>
-                                  <br/>
-
+                                  
                                 <table class="table table-hover">
                                   <thead>
                                     <tr>
                                       <th>#</th>
-                                      <th>活动名称</th>
-                                      <th>举办者</th>
+                                      <th>用户昵称</th>
+                                      <th>角色</th>
                                       <!-- <th>Client</th> -->
-                                      <th>活动日期</th>
+                                      <th>用户状态</th>
+                                    {% if able %}
+                                    {% if username == u.username%}
+                    
+                                      <th>操作</th>
+                                    {% endif %}
+                                    {% endif %}
+
                                       <!-- <th>Price</th> -->
-                                      <th>活动状态</th>
-                                      <th>活动信息</th>
+                                      <!--rh<th>活动状态</th>
+                                      <th>活动信息</th>!-->
                                   </tr>
                               </thead>
                               <tbody>
-                                {% for key,value,name,date,status in acts %}
-                                    <tr>
+                                {% for key,value in partner.items %}
+                                        <tr>
                                         <td>{{key}}</td>
                                         <td>{{value}}</td>
-                                        <td>{{name}}</td>
-                                        <td>{{date}}</td>
-                                        {% if status %}
-                                        <td><span class="label label-success">正在进行</span></td>
-                                        {%else%}
-                                        
-                                        <td><span class="label label-danger">已结束</span></td>
-                                        {%endif%}
-                                        <td><a href="http://127.0.0.1:8000/online/actinfo_new/{{key}}">点我看更多咯</a></td>
-                                    </tr>
+                                        <td>
+                                            {% if key == owner %}
+                                            <span class="label label-danger ">管理员</span>
+                                            {%else%}
+                                            <span class="label label-info ">成员</span>
+                                            {%endif%}
+
+                                        </td>
+                                       
+                                        <td>
+                                            {% if key in accept_list %}
+                                                <span class="label label-success ">已付款</span>
+                                            {%else%}
+                                                <span class="label label-danger ">未付款</span>
+                                            {%endif%}
+                                        </td>
+                                        {% if able %}
+                                        {% if username == u.username %}
+                                        {% if key != owner %}
+                                        <td>
+                                            <form method="post">    
+                                            <input type="submit" name={{key}} value="移除" class="btn btn-danger btn-sm">
+                                            </form>
+                                        </td>
+                                        {% endif %}
+
+                                      {% if key == owner %}
+                                        <td>
+                                            <button type="button" class="btn btn-default btn-sm">不可移除</button>
+                                        </td>
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endif %}
+                                        </tr>
                                 {% endfor %}
                               </tbody>
                       </table>

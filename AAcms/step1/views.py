@@ -6,6 +6,7 @@ from .forms import AddForm
 from models import User
 from models import Act
 from django import forms
+import math
 # Create your views here.
 
 class UserForm(forms.Form):
@@ -43,7 +44,7 @@ def login(request):
             password = lf.cleaned_data['password']
             user = User.objects.filter(username__exact = username,password__exact = password)
             if user:
-                response = HttpResponseRedirect('/online/userinfo/')
+                response = HttpResponseRedirect('/online/userinfo_new/')
                 response.set_cookie('username',username,36000)
                 return response
             else:
@@ -58,7 +59,7 @@ def login(request):
             if len(user)>0:
                 return HttpResponse('Regist failed --- User name has already been used.')
             User.objects.create(username=username,nickname=nickname,password=password,age=age,sex=sex)
-            response = HttpResponseRedirect('/online/userinfo/')
+            response = HttpResponseRedirect('/online/userinfo_new/')
             response.set_cookie('username',username,36000)
             return response
     else:
@@ -189,6 +190,10 @@ def actinfo(request,actid):
 
 def userinfo_new(request):
     username = request.COOKIES.get('username','')
+    q_id = request.GET.get('q')
+    if(q_id != None):
+        return HttpResponseRedirect('/online/actinfo_new/'+ q_id)
+
     p = User.objects.get(username = username)
     nickname = p.nickname
     age      = p.age
@@ -231,4 +236,117 @@ def userinfo_new(request):
         if not act_now.able:
             cost=cost+act_now.cost/pnum
     acts_num=len(acts_list)
-    return render_to_response('userinfo_new.html',{'cost':cost,'ud':ud,'username':username,'acts':acts_list,'nickname':nickname,'cf':cf,'acts_id':acts_id,'acts_num':acts_num,})
+    cost=round(cost,2)
+    return render_to_response('userinfo_new.html',{'q_id':q_id,'cost':cost,'ud':ud,'username':username,'acts':acts_list,'nickname':nickname,'cf':cf,'acts_id':acts_id,'acts_num':acts_num,'p':p,})
+
+
+def actinfo_new(request,actid):
+    username = request.COOKIES.get('username','')
+    nowuser  = User.objects.get(username=username)
+    now      = Act.objects.filter(id=actid)
+    q_id = request.GET.get('q')
+    if(q_id != None):
+        return HttpResponseRedirect('/online/actinfo_new/'+ q_id)
+    if len(now)!=0:
+        actname = now[0].actname
+        actdate = now[0].actdate
+        location= now[0].location
+        brefore = now[0].before
+        budget  = now[0].budget
+        cost    = now[0].cost
+        recive  = now[0].recive
+        owner   = now[0].owner
+        able    = now[0].able
+        partner = {}
+        u       = User.objects.get(id=owner)
+        alluser = User.objects.all()
+        nu      = []
+        flag    = nowuser in now[0].accept.all()
+        num1    = len(now[0].partner.all())
+        num2    = len(now[0].accept.all())
+        num3    = num1-num2
+        num4    = num1*3-num2*4
+        num4    = int(math.ceil(num4/4.0))
+        fflag   = (num1*3 <= num2*4)
+
+        for user in now[0].partner.all():
+            if user.id == u.id: partner[user.id]=user.nickname
+            else: partner[user.id]=user.nickname
+        for user in alluser:
+            if not user in now[0].partner.all():
+                nu.append(user)
+        if request.method == 'POST':
+           # return HttpResponse('Create Action success.')
+            for key,value in request.POST.items():
+                if key == 'yes':
+                    now[0].able = False
+                    now[0].save()
+                    return HttpResponseRedirect('/online/actinfo_new/'+actid)
+
+                if key == 'exit':
+                    now[0].partner.remove(nowuser)
+                    now[0].accept.remove(nowuser)
+                    now[0].save()
+                    return HttpResponseRedirect('/online/actinfo_new/'+actid)
+
+                if key == 'join':
+                    now[0].partner.add(nowuser)
+                    now[0].save()
+                    return HttpResponseRedirect('/online/actinfo_new/'+actid)
+
+                if key == 'accept':
+                    now[0].accept.add(nowuser)
+                    now[0].save()
+                    return HttpResponseRedirect('/online/actinfo_new/'+actid)
+
+                if key == 'refuse':
+                    now[0].accept.remove(nowuser)
+                    now[0].save()
+                    return HttpResponseRedirect('/online/actinfo_new/'+actid)
+
+                s = User.objects.get(id=key)
+                if s in nu : now[0].partner.add(s)
+                else:  
+                    now[0].partner.remove(s)
+                    now[0].accept.remove(s)
+            now[0].save()
+            return HttpResponseRedirect('/online/actinfo_new/'+actid)
+        nd=budget-recive
+        pnd=nd/len(partner)
+        pnd=round(pnd,2)
+        accept_list=[]
+        for i in now[0].accept.all():
+            accept_list.append(i.id)
+        return render_to_response('actinfo_new.html',{'pnd':pnd,'actname':actname,'actdate':actdate,'able':able,'partner':partner,\
+            'u':u,'username':username,'nu':nu,'owner':owner,'budget':budget,'location':location,'recive':recive,'nd':nd,\
+            'cost':cost,'now':now,'nowuser':nowuser,'flag':flag,'fflag':fflag,'num1':num1,'num2':num2,'num3':num3,'num4':num4,'q_id':q_id,'accept_list':accept_list,})
+    return HttpResponse('Wrong Action ID!')
+
+def add_action(request):
+    username = request.COOKIES.get('username','')
+    nowuser  = User.objects.get(username=username)
+    before   = request.POST["before"]
+    tp       = request.POST["tp"]
+    q_id = request.GET.get('q')
+    if(q_id != None):
+        return HttpResponseRedirect('/online/actinfo_new/'+ q_id)
+    return render_to_response('add_action.html',{'before':before,'tp':tp,'p':nowuser,})
+
+def add_action_f(request):
+    username = request.COOKIES.get('username','')
+    nowuser  = User.objects.get(username=username)
+    nowID    = nowuser.id
+    actname  = request.POST["actname"]
+    actdate  = request.POST["date"]
+    actlocate  = request.POST["actlocate"]
+    actcost  = request.POST["actcost"]
+    before   = request.POST["before"]
+    tp       = request.POST["tp"]
+
+    if before == 0 :
+
+        actnow=Act.objects.create(actname=actname,actdate=actdate,location=actlocate,before=True,budget=actcost,cost=0,owner=nowID,tp=tp)
+    else:
+        actnow=Act.objects.create(actname=actname,actdate=actdate,location=actlocate,before=False,budget=0,cost=actcost,owner=nowID,tp=tp)
+    actnow.partner.add(nowuser)  
+    return HttpResponseRedirect('/online/userinfo_new/')
