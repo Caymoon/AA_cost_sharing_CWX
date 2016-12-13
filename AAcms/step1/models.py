@@ -33,8 +33,15 @@ class Act(models.Model):
     partner = models.ManyToManyField(User)
     able    = models.BooleanField(default=True)
     accept  = models.ManyToManyField(User,related_name='accept_acts')
+    twp     = models.ManyToManyField(User,related_name='twp_acts')
     status  = models.IntegerField(default=0)
     tp      = models.IntegerField(default=0)
+    p1      = models.IntegerField(default=0)
+    p2      = models.IntegerField(default=0)
+    p3      = models.IntegerField(default=0)
+    p4      = models.IntegerField(default=0)
+    p5      = models.IntegerField(default=0)
+    fin     = models.ManyToManyField(User,related_name='fin_acts')
     def __unicode__(self):
         return self.actname
     

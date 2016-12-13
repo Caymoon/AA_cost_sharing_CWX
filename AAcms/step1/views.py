@@ -268,7 +268,16 @@ def actinfo_new(request,actid):
         num4    = num1*3-num2*4
         num4    = int(math.ceil(num4/4.0))
         fflag   = (num1*3 <= num2*4)
-
+        status  = now[0].status
+        twp     = now[0].twp.all()
+        tp_list = []
+        fin     = now[0].fin.all()
+        fin_list= []
+        for i in twp:
+            tp_list.append(i.id)
+        for i in fin:
+            fin_list.append(i.id)
+        num5    =len(fin_list)
         for user in now[0].partner.all():
             if user.id == u.id: partner[user.id]=user.nickname
             else: partner[user.id]=user.nickname
@@ -303,6 +312,10 @@ def actinfo_new(request,actid):
                     now[0].accept.remove(nowuser)
                     now[0].save()
                     return HttpResponseRedirect('/online/actinfo_new/'+actid)
+                if key == 'pay':
+                    now[0].fin.add(nowuser)
+                    now[0].save()
+                    return HttpResponseRedirect('/online/actinfo_new/'+actid)
 
                 s = User.objects.get(id=key)
                 if s in nu : now[0].partner.add(s)
@@ -315,11 +328,53 @@ def actinfo_new(request,actid):
         pnd=nd/len(partner)
         pnd=round(pnd,2)
         accept_list=[]
+        aaname=''
+        ma=0
+        ma=max(now[0].p1,ma)
+        ma=max(now[0].p2,ma)
+        ma=max(now[0].p3,ma)
+        ma=max(now[0].p4,ma)
+        ma=max(now[0].p5,ma)
+        if ma == now[0].p1:
+            aaname='完全均摊的AA制'
+        elif ma == now[0].p2:
+            aaname='女生少付款哦'
+        elif ma == now[0].p3:
+            aaname='男生少付款哦'
+        elif ma == now[0].p4:
+            aaname='长者少付款吼'
+        elif ma == now[0].p5:
+            aaname='管理员制定AA方案'
+        if status == 0 or status == 1:
+            aaname='投票中……'
+
+        if status == 0:
+            jd='添加活动成员'
+            jdn='20%'
+        elif status == 1:
+            jd='投票决定AA方案'
+            jdn='40%'
+        elif status == 2:
+            jd='等待成员接受方案'
+            jdn='60%'
+        elif status == 3:
+            jd='等待成员付款'
+            jdn='80%'
+        else:
+            jd='活动已经结束啦～'
+            jdn='100%'
         for i in now[0].accept.all():
             accept_list.append(i.id)
-        return render_to_response('actinfo_new.html',{'pnd':pnd,'actname':actname,'actdate':actdate,'able':able,'partner':partner,\
+        nxtst=True
+        if status == 2:
+            nxtst=fflag
+        if status == 3:
+            nxtst=(num1 == num5)
+        if status == 4:
+            nxtst=False;
+        return render_to_response('actinfo_new.html',{'num5':num5,'fin_list':fin_list,'nxtst':nxtst,'jdn':jdn,'jd':jd,'pnd':pnd,'actid':actid,'actname':actname,'actdate':actdate,'able':able,'partner':partner,\
             'u':u,'username':username,'nu':nu,'owner':owner,'budget':budget,'location':location,'recive':recive,'nd':nd,\
-            'cost':cost,'now':now,'nowuser':nowuser,'flag':flag,'fflag':fflag,'num1':num1,'num2':num2,'num3':num3,'num4':num4,'q_id':q_id,'accept_list':accept_list,})
+            'cost':cost,'now':now,'nowuser':nowuser,'flag':flag,'fflag':fflag,'num1':num1,'num2':num2,'num3':num3,'num4':num4,'q_id':q_id,'accept_list':accept_list,'status':status,'aaname':aaname,'twp_list':tp_list,})
     return HttpResponse('Wrong Action ID!')
 
 def add_action(request):
@@ -337,16 +392,47 @@ def add_action_f(request):
     nowuser  = User.objects.get(username=username)
     nowID    = nowuser.id
     actname  = request.POST["actname"]
-    actdate  = request.POST["date"]
+    actdate  = request.POST["actdate"]
     actlocate  = request.POST["actlocate"]
     actcost  = request.POST["actcost"]
     before   = request.POST["before"]
     tp       = request.POST["tp"]
 
-    if before == 0 :
+    if before == '0' :
 
         actnow=Act.objects.create(actname=actname,actdate=actdate,location=actlocate,before=True,budget=actcost,cost=0,owner=nowID,tp=tp)
     else:
         actnow=Act.objects.create(actname=actname,actdate=actdate,location=actlocate,before=False,budget=0,cost=actcost,owner=nowID,tp=tp)
     actnow.partner.add(nowuser)  
     return HttpResponseRedirect('/online/userinfo_new/')
+
+def tping(request):
+    username = request.COOKIES.get('username','')
+    nowuser  = User.objects.get(username=username)
+    nowID    = nowuser.id
+    tp       = request.POST["tp"]
+    actid    = request.POST["actid"]
+    act      = Act.objects.get(id=actid)
+    act.twp.add(nowuser)
+    if tp == '1':
+        act.p1=act.p1+1
+    elif tp == '2':
+        act.p2=act.p2+1
+    elif tp == '3':
+        act.p3=act.p3+1
+    elif tp == '4':
+        act.p4=act.p4+1
+    elif tp == '1':
+        act.p5=act.p5+1
+    act.save()
+    return HttpResponseRedirect('/online/actinfo_new/'+actid)
+
+def add_status(request):
+    username = request.COOKIES.get('username','')
+    nowuser  = User.objects.get(username=username)
+    nowID    = nowuser.id
+    actid    = request.POST["actid"]
+    act      = Act.objects.get(id=actid)
+    act.status=act.status+1
+    act.save()
+    return HttpResponseRedirect('/online/actinfo_new/'+actid)

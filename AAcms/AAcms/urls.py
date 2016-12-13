@@ -30,6 +30,8 @@ urlpatterns = [
     url(r'^online/actinfo_new/(\d+)/$', views.actinfo_new, name='actinfo_new'),
     url(r'^online/add_action/$',views.add_action,name='add_action'),
     url(r'^online/add_action_f/$',views.add_action_f,name='add_action_f'),
+    url(r'^online/tping/$',views.tping,name='tping'),
+    url(r'^online/add_status/$',views.add_status,name='add_status'),
    #url(r'^online/actinfo_new/', views.index, name='actinfo_new2'),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)  
