@@ -67,7 +67,9 @@
                         <li class="dropdown messages-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-envelope"></i>
-                                <span class="label label-success">4</span>
+                                {%if not p.mnum == 0 %}
+                                <span class="label label-success">{{p.mnum}}</span>
+                                {%endif%}
                             </a>
                             <ul class="dropdown-menu">
                                 <li class="header">You have 4 messages</li>
@@ -154,16 +156,11 @@
                                 <li class="dropdown-header text-center">Account</li>
 
                                 <li>
-                                    <a href="#">
-                                    <i class="fa fa-clock-o fa-fw pull-right"></i>
-                                        <span class="badge badge-success pull-right">10</span> Updates</a>
+                                  
                                     <a href="#">
                                     <i class="fa fa-envelope-o fa-fw pull-right"></i>
-                                        <span class="badge badge-danger pull-right">5</span> Messages</a>
-                                    <a href="#"><i class="fa fa-magnet fa-fw pull-right"></i>
-                                        <span class="badge badge-info pull-right">3</span> Subscriptions</a>
-                                    <a href="#"><i class="fa fa-question fa-fw pull-right"></i> <span class=
-                                        "badge pull-right">11</span> FAQ</a>
+                                        <span class="badge badge-danger pull-right">{{p.mnum}}</span> Messages</a>
+            
                                 </li>
 
                                 <li class="divider"></li>
@@ -275,7 +272,7 @@
                             <div class="sm-st clearfix">
                                 <span class="sm-st-icon st-violet"><i class="fa fa-envelope-o"></i></span>
                                 <div class="sm-st-info">
-                                    <span>2200</span>
+                                    <span>{{p.mnum}}</span>
                                     通知数目
                                 </div>
                             </div>

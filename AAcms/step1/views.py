@@ -295,11 +295,15 @@ def actinfo_new(request,actid):
                 if key == 'exit':
                     now[0].partner.remove(nowuser)
                     now[0].accept.remove(nowuser)
+                    nowuser.mnum=nowuser.mnum+1
+                    nowuser.save()
                     now[0].save()
                     return HttpResponseRedirect('/online/actinfo_new/'+actid)
 
                 if key == 'join':
                     now[0].partner.add(nowuser)
+                    nowuser.mnum=nowuser.mnum+1
+                    nowuser.save()
                     now[0].save()
                     return HttpResponseRedirect('/online/actinfo_new/'+actid)
 
@@ -318,13 +322,18 @@ def actinfo_new(request,actid):
                     return HttpResponseRedirect('/online/actinfo_new/'+actid)
 
                 s = User.objects.get(id=key)
-                if s in nu : now[0].partner.add(s)
+                if s in nu :
+                    now[0].partner.add(s)
+                    s.mnum=s.mnum+1
+                    s.save()
                 else:  
                     now[0].partner.remove(s)
                     now[0].accept.remove(s)
+                    s.mnum=s.mnum+1
+                    s.save()
             now[0].save()
             return HttpResponseRedirect('/online/actinfo_new/'+actid)
-        nd=budget-recive
+        nd=cost-recive
         pnd=nd/len(partner)
         pnd=round(pnd,2)
         accept_list=[]
@@ -403,7 +412,10 @@ def add_action_f(request):
         actnow=Act.objects.create(actname=actname,actdate=actdate,location=actlocate,before=True,budget=actcost,cost=0,owner=nowID,tp=tp)
     else:
         actnow=Act.objects.create(actname=actname,actdate=actdate,location=actlocate,before=False,budget=0,cost=actcost,owner=nowID,tp=tp)
-    actnow.partner.add(nowuser)  
+    actnow.partner.add(nowuser)
+    actnow.save()
+    nowuser.mnum=nowuser.mnum+1
+    nowuser.save()  
     return HttpResponseRedirect('/online/userinfo_new/')
 
 def tping(request):
@@ -434,5 +446,10 @@ def add_status(request):
     actid    = request.POST["actid"]
     act      = Act.objects.get(id=actid)
     act.status=act.status+1
+    if act.status == 4:
+        act.able=False
     act.save()
+    for i in act.partner.all():
+        i.mnum=i.mnum+1
+        i.save()
     return HttpResponseRedirect('/online/actinfo_new/'+actid)

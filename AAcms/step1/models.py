@@ -17,7 +17,7 @@ class User(models.Model):
     age      = models.IntegerField()
     sex      = models.BooleanField()    
     avatar   = models.ImageField(upload_to='avatars/',default='avatars/huaji2')
-    
+    mnum     = models.IntegerField(default=0)
     def __unicode__(self):
         return self.username
 
