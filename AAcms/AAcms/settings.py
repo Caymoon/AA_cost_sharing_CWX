@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 # -*- coding:utf-8 -*-  
+=======
+>>>>>>> 54f479e04df4510eab85bffd66fffe40d274ff2b
 """
 Django settings for AAcms project.
 
@@ -122,8 +125,11 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'collectstatic')
 
+<<<<<<< HEAD
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = '/media/'
+=======
+>>>>>>> 54f479e04df4510eab85bffd66fffe40d274ff2b
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
