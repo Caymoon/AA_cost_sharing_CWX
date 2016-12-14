@@ -1,5 +1,4 @@
 #coding:utf-8
-<<<<<<< HEAD
 from django.shortcuts import render,render_to_response
 from django.http import HttpResponse,HttpResponseRedirect
 from django.template import RequestContext
@@ -8,12 +7,6 @@ from models import User
 from models import Act
 from django import forms
 import math
-=======
-from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
-from models import User, Act
-from django import forms
->>>>>>> 54f479e04df4510eab85bffd66fffe40d274ff2b
 # Create your views here.
 
 class UserForm(forms.Form):
@@ -51,11 +44,7 @@ def login(request):
             password = lf.cleaned_data['password']
             user = User.objects.filter(username__exact = username,password__exact = password)
             if user:
-<<<<<<< HEAD
                 response = HttpResponseRedirect('/online/userinfo_new/')
-=======
-                response = HttpResponseRedirect('/online/userinfo/')
->>>>>>> 54f479e04df4510eab85bffd66fffe40d274ff2b
                 response.set_cookie('username',username,36000)
                 return response
             else:
@@ -70,31 +59,19 @@ def login(request):
             if len(user)>0:
                 return HttpResponse('Regist failed --- User name has already been used.')
             User.objects.create(username=username,nickname=nickname,password=password,age=age,sex=sex)
-<<<<<<< HEAD
             response = HttpResponseRedirect('/online/userinfo_new/')
-=======
-            response = HttpResponseRedirect('/online/userinfo/')
->>>>>>> 54f479e04df4510eab85bffd66fffe40d274ff2b
             response.set_cookie('username',username,36000)
             return response
     else:
         lf = LoginForm()
         uf = UserForm()
-<<<<<<< HEAD
     return render_to_response('login.html',{'lf':lf,'uf':uf})
-=======
-    return render(request, 'login.html', {'lf':lf,'uf':uf})
->>>>>>> 54f479e04df4510eab85bffd66fffe40d274ff2b
     
 '''def index(request):
     username = request.COOKIES.get('username','')
     return render_to_response('index.html',{'username':username})'''
 def index(request):
-<<<<<<< HEAD
     return render_to_response('index.html')
-=======
-    return render(request, 'index.html')
->>>>>>> 54f479e04df4510eab85bffd66fffe40d274ff2b
     
 def logout(request):
     response = HttpResponseRedirect('/online/login/')
@@ -134,12 +111,7 @@ def userinfo(request):
     else:
         cf = CreateForm()    
     
-<<<<<<< HEAD
     return render_to_response('userinfo.html',{'ud':ud,'username':username,'acts':acts,'nickname':nickname,'cf':cf})
-=======
-    return render(request, 'userinfo.html', locals())
-    # {'ud':ud,'username':username,'acts':acts,'nickname':nickname,'cf':cf}
->>>>>>> 54f479e04df4510eab85bffd66fffe40d274ff2b
     
 def actinfo(request,actid):
     username = request.COOKIES.get('username','')
@@ -209,31 +181,19 @@ def actinfo(request,actid):
             return HttpResponseRedirect('/online/actinfo/'+actid)
         nd=budget-recive
         pnd=nd/len(partner)
-<<<<<<< HEAD
         return render_to_response('actinfo.html',{'pnd':pnd,'actname':actname,'actdate':actdate,'able':able,'partner':partner,\
         	'u':u,'username':username,'nu':nu,'owner':owner,'budget':budget,'location':location,'recive':recive,'nd':nd,\
         	'cost':cost,'now':now,'nowuser':nowuser,'flag':flag,'fflag':fflag,'num1':num1,'num2':num2,'num3':num3})
-=======
-        return render(request, 'actinfo.html', locals())
-        '''
-        {'pnd':pnd,'actname':actname,'actdate':actdate,'able':able,'partner':partner,\
-        'u':u,'username':username,'nu':nu,'owner':owner,'budget':budget,'location':location,'recive':recive,'nd':nd,\
-        'cost':cost,'now':now,'nowuser':nowuser,'flag':flag,'fflag':fflag,'num1':num1,'num2':num2,'num3':num3}
-        '''
->>>>>>> 54f479e04df4510eab85bffd66fffe40d274ff2b
     return HttpResponse('Wrong Action ID!')
 
 
 
 def userinfo_new(request):
     username = request.COOKIES.get('username','')
-<<<<<<< HEAD
     q_id = request.GET.get('q')
     if(q_id != None):
         return HttpResponseRedirect('/online/actinfo_new/'+ q_id)
 
-=======
->>>>>>> 54f479e04df4510eab85bffd66fffe40d274ff2b
     p = User.objects.get(username = username)
     nickname = p.nickname
     age      = p.age
@@ -276,7 +236,6 @@ def userinfo_new(request):
         if not act_now.able:
             cost=cost+act_now.cost/pnum
     acts_num=len(acts_list)
-<<<<<<< HEAD
     cost=round(cost,2)
     return render_to_response('userinfo_new.html',{'q_id':q_id,'cost':cost,'ud':ud,'username':username,'acts':acts_list,'nickname':nickname,'cf':cf,'acts_id':acts_id,'acts_num':acts_num,'p':p,})
 
@@ -494,12 +453,3 @@ def add_status(request):
         i.mnum=i.mnum+1
         i.save()
     return HttpResponseRedirect('/online/actinfo_new/'+actid)
-=======
-    # {'cost':cost,'ud':ud,'username':username,'acts':acts_list,'nickname':nickname,'cf':cf,'acts_id':acts_id,'acts_num':acts_num,}
-    return render(request, 'userinfo_new.html', locals())
-    
-    
-    
-    
-    
->>>>>>> 54f479e04df4510eab85bffd66fffe40d274ff2b
